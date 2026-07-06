@@ -49,7 +49,7 @@ class ModelRunner:
             except Exception:
                 # Suggested by Gemini
                 text = prompt if not system_prompt else f"{system_prompt}\n\n{prompt}"
-                input_ids = self.tokenizer(text, return_tensors="pt").["input_ids"].to(self.model.device)
+                input_ids = self.tokenizer(text, return_tensors="pt")["input_ids"].to(self.model.device)
 
         start = time.time()
         with torch.no_grad():
