@@ -43,8 +43,13 @@ class ModelRunner:
             ).to(self.model.device)
         except Exception:
             # Fallback for models without a chat template configured
-            text = prompt if not system_prompt else f"{system_prompt}\n\n{prompt}"
-            input_ids = self.tokenizer(text, return_tensors="pt").input_ids.to(self.model.device)
+            try:
+                text = prompt if not system_prompt else f"{system_prompt}\n\n{prompt}"
+                input_ids = self.tokenizer(text, return_tensors="pt").input_ids.to(self.model.device)
+            except Exception:
+                # Suggested by Gemini
+                text = prompt if not system_prompt else f"{system_prompt}\n\n{prompt}"
+                input_ids = self.tokenizer(text, return_tensors="pt").["input_ids"].to(self.model.device)
 
         start = time.time()
         with torch.no_grad():
