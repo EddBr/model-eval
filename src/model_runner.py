@@ -58,7 +58,7 @@ class ModelRunner:
 
 
 
-        new_tokens = output_ids[0][input_ids.shape[-1]:]
+        new_tokens = output_ids[0][inputs.shape[-1]:]
         response_text = self.tokenizer.decode(new_tokens, skip_special_tokens=True)
 
         return {
