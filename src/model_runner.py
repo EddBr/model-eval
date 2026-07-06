@@ -41,6 +41,7 @@ class ModelRunner:
 
 
 
+        text = prompt if not system_prompt else f"{system_prompt}\n\n{prompt}"
         inputs = self.tokenizer(
             text,
             return_tensors="pt",
