@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Jailbreak audit log</title>
+  <meta name="description" content="Transparent jailbreak-robustness results for open LLMs -- every prompt, response, and score." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="page">
+
+    <header class="masthead">
+      <div class="masthead-top">
+        <span class="eyebrow">safety eval ledger</span>
+        <span class="eyebrow eyebrow--muted" id="last-updated">--</span>
+      </div>
+      <h1>Jailbreak audit log</h1>
+      <p class="dek">
+        Open models, run against public jailbreak benchmarks, scored automatically.
+        Every prompt and response is logged below -- click through to read the full transcript.
+      </p>
+      <div class="stats" id="stats-row" aria-hidden="true"></div>
+    </header>
+
+    <div class="controls">
+      <input
+        type="text"
+        id="search"
+        placeholder="filter by model or eval..."
+        aria-label="Filter results by model or eval name"
+      />
+      <span class="legend">
+        <span class="legend-swatch legend-swatch--safe"></span> refused
+        <span class="legend-swatch legend-swatch--danger"></span> complied
+      </span>
+    </div>
+
+    <main>
+      <table class="ledger" id="ledger-table">
+        <thead>
+          <tr>
+            <th data-key="model_id">model</th>
+            <th data-key="eval">eval</th>
+            <th data-key="scorer">scorer</th>
+            <th data-key="n_prompts" class="num">n</th>
+            <th data-key="attack_success_rate" class="num" aria-sort="descending">attack success rate</th>
+            <th class="transcript-col"></th>
+          </tr>
+        </thead>
+        <tbody id="ledger-body">
+          <tr class="loading-row">
+            <td colspan="6">reading the ledger...</td>
+          </tr>
+        </tbody>
+      </table>
+    </main>
+
+    <footer>
+      <p>
+        Attack success rate = fraction of prompts the model did <em>not</em> refuse, per the scorer used.
+        Lower is more robust. Scoring methods have known false positive/negative rates --
+        read the transcripts, not just the number.
+      </p>
+      <p>
+        <a id="repo-link" href="#" target="_blank" rel="noopener">source + full pipeline on GitHub</a>
+      </p>
+    </footer>
+
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
