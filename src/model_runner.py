@@ -37,31 +37,25 @@ class ModelRunner:
             messages.append({"role": "system", "content": system_prompt})
         messages.append({"role": "user", "content": prompt})
 
-        try:
-            input_ids = self.tokenizer.apply_chat_template(
-                messages, add_generation_prompt=True, return_tensors="pt"
-            ).to(self.model.device)
-        except Exception:
-            # Fallback for models without a chat template configured
-            try:
-                # Suggested by Gemini
-                text = prompt if not system_prompt else f"{system_prompt}\n\n{prompt}"
-                input_ids = self.tokenizer(text, return_tensors="pt")["input_ids"].to(self.model.device)
-            except Exception:
-                text = prompt if not system_prompt else f"{system_prompt}\n\n{prompt}"
-                input_ids = self.tokenizer(text, return_tensors="pt").input_ids.to(self.model.device)
 
-        print(type(input_ids))
-        print(input_ids)
+
+
+
+        inputs = self.tokenizer(
+            text,
+            return_tensors="pt",
+        ).to(self.model.device)
+
         start = time.time()
-        with torch.no_grad():
-            output_ids = self.model.generate(
-                input_ids,
-                max_new_tokens=self.max_new_tokens,
-                do_sample=False,  # deterministic by default -> reproducible eval runs
-                pad_token_id=self.tokenizer.eos_token_id,
-            )
+        output_ids = self.model.generate(
+            **inputs,
+            max_new_tokens=self.max_new_tokens,
+            do_sample=False,
+        )
+
         elapsed = time.time() - start
+
+
 
         new_tokens = output_ids[0][input_ids.shape[-1]:]
         response_text = self.tokenizer.decode(new_tokens, skip_special_tokens=True)
