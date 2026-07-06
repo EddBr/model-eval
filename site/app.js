@@ -1,7 +1,7 @@
 // ---- Configure this for your repo ----
-const OWNER = "YOUR-GITHUB-USERNAME";
-const REPO = "llm-safety-evals";
-const BRANCH = "main";
+const OWNER = process.env.OWNER //"YOUR-GITHUB-USERNAME";
+const REPO = process.env.REPO //"llm-safety-evals";
+const BRANCH = process.env.BRANCH //"main";
 // ---------------------------------------
 
 const LEADERBOARD_URL = `https://raw.githubusercontent.com/${OWNER}/${REPO}/${BRANCH}/results/leaderboard.json`;
