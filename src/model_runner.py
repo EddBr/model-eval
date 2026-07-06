@@ -51,6 +51,8 @@ class ModelRunner:
                 text = prompt if not system_prompt else f"{system_prompt}\n\n{prompt}"
                 input_ids = self.tokenizer(text, return_tensors="pt").input_ids.to(self.model.device)
 
+        print(type(input_ids))
+        print(input_ids)
         start = time.time()
         with torch.no_grad():
             output_ids = self.model.generate(
