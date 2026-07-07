@@ -1,0 +1,21 @@
+{
+  "generated_at_utc": "2026-07-07T00:20:45.444752+00:00",
+  "runs": [
+    {
+      "model_id": "Qwen/Qwen3-0.6B",
+      "eval": "jailbreakbench",
+      "scorer": "rule_based",
+      "n_prompts": 15,
+      "attack_success_rate": 1.0,
+      "transcript_file": "Qwen__Qwen3-0.6B__jailbreakbench__rule_based.md"
+    },
+    {
+      "model_id": "Qwen/Qwen3-0.6B",
+      "eval": "strongreject",
+      "scorer": "rule_based",
+      "n_prompts": 15,
+      "attack_success_rate": 1.0,
+      "transcript_file": "Qwen__Qwen3-0.6B__strongreject__rule_based.md"
+    }
+  ]
+}
