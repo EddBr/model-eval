@@ -10,9 +10,16 @@ Usage examples:
   # higher-fidelity scoring (costs a little API credit)
   python src/run_eval.py --model Qwen/Qwen2.5-1.5B-Instruct --eval strongreject --scorer llm_judge
 
+  # re-run even if results already exist (normally skipped to save compute)
+  python src/run_eval.py --model Qwen/Qwen2.5-1.5B-Instruct --eval jailbreakbench --force
+
 Every single (prompt, response, score) triple is written to a JSON file
 under results/ -- nothing is aggregated-away, so the raw transcript is
 always inspectable.
+
+By default, any (model, eval, scorer) combo that already has a results
+file is skipped rather than re-run -- re-testing an already-tested model
+just burns GPU time for an identical result. Pass --force to override.
 """
 import argparse
 import json
@@ -24,13 +31,29 @@ sys.path.insert(0, os.path.dirname(__file__))
 from model_runner import ModelRunner
 from evals import EVAL_REGISTRY
 from scoring import SCORER_REGISTRY
+from result_paths import result_path
 
 
-def run(model_id: str, eval_names: list[str], n: int, scorer_name: str, out_dir: str):
-    runner = ModelRunner(model_id)
-    scorer = SCORER_REGISTRY[scorer_name]
-
+def run(model_id: str, eval_names: list[str], n: int, scorer_name: str, out_dir: str, force: bool = False):
+    # Figure out up front which evals actually need running, so we can skip
+    # loading the model entirely if there's nothing left to do -- that's
+    # where the real compute cost is, not the dataset loading or scoring.
+    pending = []
     for eval_name in eval_names:
+        existing = result_path(model_id, eval_name, scorer_name, out_dir)
+        if os.path.exists(existing) and not force:
+            print(f"[run_eval] {model_id} / {eval_name} / {scorer_name} already tested -- skipping ({existing})")
+        else:
+            pending.append(eval_name)
+
+    if not pending:
+        print(f"[run_eval] nothing to do for {model_id} (all requested evals already tested; use --force to re-run)")
+        return
+
+    scorer = SCORER_REGISTRY[scorer_name]
+    runner = ModelRunner(model_id)
+
+    for eval_name in pending:
         eval_loader = EVAL_REGISTRY[eval_name]()
         items = eval_loader.load(n=n or None)
         print(f"[run_eval] {eval_name}: {len(items)} prompts")
@@ -57,9 +80,7 @@ def run(model_id: str, eval_names: list[str], n: int, scorer_name: str, out_dir:
 
         asr = sum(r["attack_success"] for r in records) / len(records) if records else 0.0
 
-        safe_model_name = model_id.replace("/", "__")
-        fname = f"{safe_model_name}__{eval_name}__{scorer_name}.json"
-        out_path = os.path.join(out_dir, fname)
+        out_path = result_path(model_id, eval_name, scorer_name, out_dir)
         os.makedirs(out_dir, exist_ok=True)
         with open(out_path, "w") as f:
             json.dump({
@@ -80,6 +101,7 @@ if __name__ == "__main__":
     p.add_argument("--n", type=int, default=10, help="prompts per eval (0 = all)")
     p.add_argument("--scorer", default="rule_based", choices=list(SCORER_REGISTRY.keys()))
     p.add_argument("--out", default="results")
+    p.add_argument("--force", action="store_true", help="re-run even if results already exist for this model/eval/scorer")
     args = p.parse_args()
 
     if args.eval == "all":
@@ -90,4 +112,4 @@ if __name__ == "__main__":
         if unknown:
             raise SystemExit(f"Unknown eval name(s): {unknown}. Choices: {list(EVAL_REGISTRY.keys())} or 'all'")
 
-    run(args.model, eval_names, args.n, args.scorer, args.out)
+    run(args.model, eval_names, args.n, args.scorer, args.out, force=args.force)

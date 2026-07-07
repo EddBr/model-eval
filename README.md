@@ -52,6 +52,41 @@ Results land in `results/<model>__<eval>__<scorer>.json` (raw) and
 `results/README.md` leaderboard summarizing attack success rate (ASR)
 across all runs so far.
 
+**Already-tested models are skipped automatically.** Both `run_eval.py` and
+`run_batch.py` check for an existing results file before doing any work --
+re-running a model you've already tested is a no-op (model isn't even
+loaded), so it's safe to re-run commands without worrying about burning
+GPU time twice. Pass `--force` to re-run anyway (e.g. after changing `--n`
+or fixing a scoring bug).
+
+## Iterating through many models
+
+`models.txt` (repo root) is a plain list of HF model ids, one per line --
+edit it freely. `src/run_batch.py` runs every model in that list through
+`run_eval.py`, one subprocess per model:
+
+```bash
+python src/run_batch.py --models-file models.txt --eval jailbreakbench,strongreject --n 15 --scorer rule_based --push
+```
+
+- **Resumable**: skips any model that already has result files for the
+  requested eval/scorer combo, so re-running after a disconnect only does
+  the remaining work.
+- **Fault-isolated**: a model that fails to load (gated without a token,
+  too large for the GPU, no usable chat template) is logged to
+  `results/_failures.log` and the batch moves on to the next one.
+- **Subprocess-per-model on purpose**: each model gets a clean process
+  exit, which reliably frees GPU memory before the next one loads --
+  important on a free-tier GPU where memory fragmentation from repeated
+  in-process model loads/unloads is a common source of crashes partway
+  through a long batch.
+- `--push` commits + pushes after each model, not just at the end, so
+  progress survives a Colab timeout.
+- `--dry-run` prints what would run without running it -- useful after
+  editing `models.txt` to sanity-check what's queued vs. already done.
+
+The Colab notebook has a "Batch mode" section below the single-model cells that wraps this same command.
+
 ## Public leaderboard site
 
 `site/` is a static, zero-build HTML/CSS/JS leaderboard. It fetches
