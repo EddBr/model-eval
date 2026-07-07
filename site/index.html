@@ -3,74 +3,77 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Jailbreak audit log</title>
-  <meta name="description" content="Transparent jailbreak-robustness results for open LLMs -- every prompt, response, and score." />
+  <title>Open LLM Safety Index — safety ratings for open-weight AI models</title>
+  <meta name="description" content="An independent 1-to-5 safety rating for open-weight language models. We stress-test each model against known jailbreak attacks and publish every prompt, response, and score." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="page">
 
-    <header class="masthead">
-      <div class="masthead-top">
-        <span class="eyebrow">safety eval ledger</span>
-        <span class="eyebrow eyebrow--muted" id="last-updated">--</span>
+  <div class="page">
+    <section class="hero">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:0.5rem">
+        <span class="eyebrow">the safety leaderboard</span>
+        <span class="eyebrow" id="last-updated">—</span>
       </div>
-      <h1>Jailbreak audit log</h1>
+      <h1>How safe is your open AI model?</h1>
       <p class="dek">
-        Open models, run against public jailbreak benchmarks, scored automatically.
-        Every prompt and response is logged below -- click through to read the full transcript.
+        Anyone can download an open-weight language model and build on it — but
+        almost no one can tell you how easily that model can be talked into doing
+        harm. We test each one and give it a plain <strong>safety score from 1 to 5</strong>.
+        Higher is safer. Every score links to the full evidence behind it.
       </p>
+
+      <div class="score-legend" aria-hidden="true">
+        <span class="score-chip"><span class="score-dot" style="background:var(--score-5)">5</span> Robust</span>
+        <span class="score-chip"><span class="score-dot" style="background:var(--score-4)">4</span> Strong</span>
+        <span class="score-chip"><span class="score-dot" style="background:var(--score-3)">3</span> Moderate</span>
+        <span class="score-chip"><span class="score-dot" style="background:var(--score-2)">2</span> Weak</span>
+        <span class="score-chip"><span class="score-dot" style="background:var(--score-1)">1</span> Fragile</span>
+      </div>
+
       <div class="stats" id="stats-row" aria-hidden="true"></div>
-    </header>
+    </section>
 
     <div class="controls">
       <input
         type="text"
         id="search"
-        placeholder="filter by model or eval..."
-        aria-label="Filter results by model or eval name"
+        placeholder="filter by model or benchmark…"
+        aria-label="Filter the leaderboard by model or benchmark"
       />
-      <span class="legend">
-        <span class="legend-swatch legend-swatch--safe"></span> refused
-        <span class="legend-swatch legend-swatch--danger"></span> complied
-      </span>
+      <span class="controls-note">click any row for the full breakdown</span>
     </div>
 
     <main>
-      <table class="ledger" id="ledger-table">
+      <table class="board" id="board-table">
         <thead>
           <tr>
+            <th class="no-sort">#</th>
             <th data-key="model_id">model</th>
-            <th data-key="eval">eval</th>
-            <th data-key="scorer">scorer</th>
-            <th data-key="n_prompts" class="num">n</th>
-            <th data-key="attack_success_rate" class="num" aria-sort="descending">attack success rate</th>
-            <th class="transcript-col"></th>
+            <th data-key="score" aria-sort="descending">safety score</th>
+            <th data-key="asr" class="hide-sm">attacks that worked</th>
+            <th data-key="benchmarks" class="num hide-sm">benchmarks</th>
+            <th data-key="prompts" class="num">prompts</th>
           </tr>
         </thead>
-        <tbody id="ledger-body">
-          <tr class="loading-row">
-            <td colspan="6">reading the ledger...</td>
-          </tr>
+        <tbody id="board-body">
+          <tr class="loading-row"><td colspan="6">loading ratings…</td></tr>
         </tbody>
       </table>
     </main>
 
-    <footer>
-      <p>
-        Attack success rate = fraction of prompts the model did <em>not</em> refuse, per the scorer used.
-        Lower is more robust. Scoring methods have known false positive/negative rates --
-        read the transcripts, not just the number.
-      </p>
-      <p>
-        <a id="repo-link" href="#" target="_blank" rel="noopener">source + full pipeline on GitHub</a>
-      </p>
-    </footer>
-
+    <p class="dek small" style="margin-top:1.75rem">
+      Today the score measures <strong>jailbreak robustness</strong> — how well a
+      model holds its safety guardrails when someone actively tries to break them.
+      It's the first of several safety dimensions we're building toward a single
+      standard. <a href="methodology.html">See exactly how we score →</a>
+    </p>
   </div>
+
+  <script src="shared.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

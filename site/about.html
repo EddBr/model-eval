@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>About — Open LLM Safety Index</title>
+  <meta name="description" content="Why the Open LLM Safety Index exists: an independent, transparent safety standard for open-weight language models." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="page">
+    <span class="eyebrow">about</span>
+    <h1 class="page-title">A safety standard for open AI</h1>
+    <p class="dek">
+      Open-weight models are everywhere — but there's no common yardstick for how
+      safe they are. We're building one.
+    </p>
+
+    <div class="prose">
+      <p class="lead">
+        The <strong>Open LLM Safety Index</strong> is an independent effort to test
+        the safety of every open-weight large language model and publish the results
+        as a single, easy-to-read score from 1 to 5.
+      </p>
+
+      <h2>Why this exists</h2>
+      <p>
+        You can download thousands of open-weight AI models today and drop them
+        straight into a product, an app, or an internal tool. That openness is
+        genuinely good — it drives research, competition, and independence from a
+        handful of big providers.
+      </p>
+      <p>
+        But it comes with a blind spot. When you pick a model, you can compare its
+        speed, its size, and how well it writes code or answers trivia. What you
+        <em>can't</em> easily find out is how safely it behaves — how hard it is to
+        trick into producing dangerous content, and how reliably its guardrails
+        hold up under pressure. That information exists in scattered research papers,
+        but not in a form a normal person choosing a model can actually use.
+      </p>
+
+      <div class="callout">
+        <p>
+          <strong>Our goal:</strong> test the safety of every open-weight model, so
+          the people building with them are informed — and so there's a shared
+          standard for what "safe enough" means.
+        </p>
+      </div>
+
+      <h2>What the score means</h2>
+      <p>
+        Each model gets a safety score from <strong>1 (Fragile)</strong> to
+        <strong>5 (Robust)</strong>. A high score means the model held its
+        guardrails even when we actively tried to break them; a low score means it
+        gave in easily. One number, the same way for every model, so you can compare
+        at a glance — with the full evidence one click away.
+      </p>
+      <p>
+        Right now the score reflects <strong>jailbreak robustness</strong>:
+        resistance to prompts crafted to bypass a model's safety training. That's the
+        first dimension we measure, and it's the whole of the score today. It won't
+        be the last — safety has more than one facet, and the index is built to grow
+        into a broader, combined standard over time.
+      </p>
+
+      <h2>Two principles</h2>
+      <h3>Independent</h3>
+      <p>
+        We don't build these models and we're not paid by anyone who does. The index
+        is a neutral third party — the same tests, applied the same way, to everyone.
+      </p>
+      <h3>Fully transparent</h3>
+      <p>
+        Every score is reproducible. The benchmarks are public, the code is open
+        source, and we publish the complete transcript behind every result — every
+        prompt we sent, every raw response the model gave, and every judgement.
+        Nothing is hidden behind an aggregate number. If you don't trust the score,
+        read the evidence and check it yourself.
+      </p>
+
+      <div class="callout">
+        <p>
+          Want the technical detail — the benchmarks, the scoring, and how the 1–5
+          scale is calculated? <a href="methodology.html">Read “How it works” →</a>
+        </p>
+      </div>
+
+      <h2>A note on responsible testing</h2>
+      <p>
+        To measure whether a model resists misuse, we have to actually try to misuse
+        it — using prompts from established, published safety benchmarks. This is
+        standard practice in AI safety research. The stored transcripts contain real,
+        uncensored model outputs, some of which attempt to comply with harmful
+        requests; they exist so the results can be audited, not as a how-to. We treat
+        them as the red-teaming research artifacts they are.
+      </p>
+    </div>
+  </div>
+
+  <script src="shared.js"></script>
+</body>
+</html>
