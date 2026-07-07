@@ -1,6 +1,6 @@
 // ---- Configure this for your repo ----
 const OWNER = "eddbr";
-const REPO = "llm-safety-evals";
+const REPO = "model-eval";
 const BRANCH = "main";
 // ---------------------------------------
 
