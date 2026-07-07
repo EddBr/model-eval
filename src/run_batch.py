@@ -24,7 +24,7 @@ import sys
 from datetime import datetime, timezone
 
 sys.path.insert(0, os.path.dirname(__file__))
-from result_paths import result_path
+from result_paths import result_path, is_valid_result
 
 REPO_ROOT = os.path.join(os.path.dirname(__file__), "..")
 RESULTS_DIR = os.path.join(REPO_ROOT, "results")
@@ -42,7 +42,10 @@ def read_model_list(path: str) -> list[str]:
 
 
 def already_done(model_id: str, eval_names: list[str], scorer: str) -> bool:
-    return all(os.path.exists(result_path(model_id, e, scorer, RESULTS_DIR)) for e in eval_names)
+    # Require a *valid, complete* result for every requested eval -- a missing
+    # OR corrupt/incomplete file means this model still has work to do, so it
+    # gets re-run (run_eval.py itself only redoes the eval(s) actually missing).
+    return all(is_valid_result(result_path(model_id, e, scorer, RESULTS_DIR)) for e in eval_names)
 
 
 def log_failure(model_id: str, error: str):

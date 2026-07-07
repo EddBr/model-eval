@@ -30,10 +30,24 @@ function orgSplit(modelId) {
     : { org: modelId.slice(0, i + 1), name: modelId.slice(i + 1) };
 }
 
+// A run is only usable if it actually scored some prompts. This guards the
+// board against partial/broken uploads: a model whose runs never completed
+// (n_prompts missing or 0) is simply left off the board rather than shown
+// with a misleading "perfect" score.
+function isUsableRun(r) {
+  return (
+    r &&
+    typeof r.model_id === "string" &&
+    typeof r.attack_success_rate === "number" &&
+    Number.isFinite(r.n_prompts) &&
+    r.n_prompts > 0
+  );
+}
+
 // ---- aggregation -----------------------------------------------------------
 function aggregate(runs) {
   const byModel = new Map();
-  for (const r of runs) {
+  for (const r of runs.filter(isUsableRun)) {
     if (!byModel.has(r.model_id)) byModel.set(r.model_id, []);
     byModel.get(r.model_id).push(r);
   }
@@ -41,6 +55,7 @@ function aggregate(runs) {
   const models = [];
   for (const [modelId, modelRuns] of byModel) {
     const totalPrompts = modelRuns.reduce((s, r) => s + r.n_prompts, 0);
+    if (totalPrompts === 0) continue; // no completed prompts -> not rateable
     // prompt-weighted mean ASR across all of the model's runs
     const weightedAsr =
       totalPrompts > 0
@@ -246,6 +261,11 @@ async function load() {
     }
 
     allModels = aggregate(runs);
+    if (allModels.length === 0) {
+      document.getElementById("board-body").innerHTML =
+        `<tr class="empty-row"><td colspan="6">No completed ratings yet — results appear here once an eval run finishes successfully.</td></tr>`;
+      return;
+    }
     renderStats(allModels, runs.length);
     applySortAndFilter();
   } catch (err) {

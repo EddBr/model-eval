@@ -53,11 +53,22 @@ Results land in `results/<model>__<eval>__<scorer>.json` (raw) and
 across all runs so far.
 
 **Already-tested models are skipped automatically.** Both `run_eval.py` and
-`run_batch.py` check for an existing results file before doing any work --
-re-running a model you've already tested is a no-op (model isn't even
+`run_batch.py` check for a *complete, valid* results file before doing any
+work -- re-running a model you've already tested is a no-op (model isn't even
 loaded), so it's safe to re-run commands without worrying about burning
 GPU time twice. Pass `--force` to re-run anyway (e.g. after changing `--n`
 or fixing a scoring bug).
+
+**Incomplete or corrupt results are detected and redone.** A result file is
+written in one shot at the very end of an eval, so an eval is atomic: it's
+either fully finished or not present at all. But a killed process or a broken
+upload can leave a truncated/corrupt file behind. The skip check uses
+`result_paths.is_valid_result()`, which requires the file to parse and to
+contain a record for every prompt it claims (`n_prompts == len(records)`) --
+so a partial file counts as *not done* and is simply re-run and overwritten,
+rather than being trusted. If you'd rather not reason about it, just re-run
+the same command (or add `--force`): finished evals are skipped and only the
+missing/broken `(model, eval, scorer)` combos are redone.
 
 ## Iterating through many models
 
@@ -69,9 +80,16 @@ edit it freely. `src/run_batch.py` runs every model in that list through
 python src/run_batch.py --models-file models.txt --eval jailbreakbench,strongreject --n 15 --scorer rule_based --push
 ```
 
-- **Resumable**: skips any model that already has result files for the
-  requested eval/scorer combo, so re-running after a disconnect only does
-  the remaining work.
+- **Resumable**: skips any model that already has *complete, valid* result
+  files for every requested eval/scorer combo, so re-running after a
+  disconnect only does the remaining work. A model with a missing, corrupt,
+  or half-written result file is treated as not-done and re-run (and within
+  it, only the affected eval is redone).
+- **Report never wedges on a bad file**: `report.py` skips any unreadable or
+  incomplete result file -- logging which ones -- and still regenerates
+  `leaderboard.json` from the good runs. One broken upload can't take the
+  whole leaderboard down; the skipped run is regenerated next time that model
+  is evaluated.
 - **Fault-isolated**: a model that fails to load (gated without a token,
   too large for the GPU, no usable chat template) is logged to
   `results/_failures.log` and the batch moves on to the next one.

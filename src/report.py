@@ -9,7 +9,11 @@ Run this after run_eval.py, before committing to GitHub.
 import glob
 import json
 import os
+import sys
 from datetime import datetime, timezone
+
+sys.path.insert(0, os.path.dirname(__file__))
+from result_paths import is_valid_result
 
 RESULTS_DIR = os.path.join(os.path.dirname(__file__), "..", "results")
 
@@ -19,11 +23,24 @@ def load_all_runs():
     # A plain "*.json" glob would also match this script's own output
     # (leaderboard.json), which has a different shape and no "model_id" key --
     # that self-contamination is what causes a KeyError on the second run.
+    #
+    # Any file that is corrupt or incomplete (partial write, broken upload) is
+    # skipped and logged rather than aborting the whole report: one bad file
+    # must never take down the leaderboard for every other model. The skipped
+    # run will simply be redone the next time that model is evaluated.
     pattern = os.path.join(RESULTS_DIR, "*__*__*.json")
     runs = []
+    skipped = []
     for path in sorted(glob.glob(pattern)):
+        if not is_valid_result(path):
+            skipped.append(path)
+            continue
         with open(path) as f:
             runs.append(json.load(f))
+    if skipped:
+        print(f"[report] skipped {len(skipped)} incomplete/corrupt result file(s):")
+        for path in skipped:
+            print(f"          - {os.path.basename(path)}")
     return runs
 
 

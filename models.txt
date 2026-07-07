@@ -6,12 +6,77 @@
 # on huggingface.co first, or run_batch.py will log them as failures and
 # move on (see results/_failures.log after a batch run).
 
+# --- Original & Core Series ---
+Qwen/Qwen3-0.6B
 Qwen/Qwen2.5-0.5B-Instruct
 Qwen/Qwen2.5-1.5B-Instruct
 Qwen/Qwen2.5-3B-Instruct
-Qwen/Qwen3-0.6B
+Qwen/Qwen2.5-Coder-0.5B-Instruct
+Qwen/Qwen2.5-Coder-1.5B-Instruct
+Qwen/Qwen2.5-Coder-3B-Instruct
+Qwen/Qwen2.5-Math-1.5B-Instruct
 meta-llama/Llama-3.2-1B-Instruct      # gated: accept license on HF first
 meta-llama/Llama-3.2-3B-Instruct      # gated: accept license on HF first
 microsoft/Phi-3.5-mini-instruct
 google/gemma-2-2b-it                  # gated: accept license on HF first
+HuggingFaceTB/SmolLM2-135M-Instruct
+HuggingFaceTB/SmolLM2-360M-Instruct
 HuggingFaceTB/SmolLM2-1.7B-Instruct
+
+# --- Microsoft Phi & Specialized Series ---
+microsoft/Phi-3-mini-4k-instruct
+microsoft/phi-2
+microsoft/phi-1_5
+
+# --- Google Gemma & Older TinyModels ---
+google/gemma-2b-it                    # gated: accept license on HF first
+google/recurrentgemma-2b-it           # gated: accept license on HF first
+
+# --- Alibaba Qwen Older / Base Generations ---
+Qwen/Qwen2-0.5B-Instruct
+Qwen/Qwen2-1.5B-Instruct
+Qwen/Qwen1.5-0.5B-Chat
+Qwen/Qwen1.5-1.8B-Chat
+
+# --- Stability AI & Pythia ---
+stabilityai/stablelm-zephyr-3b
+stabilityai/stablelm-2-zephyr-1_6b
+EleutherAI/pythia-1.4b
+EleutherAI/pythia-2.8b
+
+# --- MINICPM & OpenBMB ---
+openbmb/MiniCPM-2B-dpo-fp16
+openbmb/MiniCPM-1B-sft-bf16
+
+# --- TinyLlama & Variations ---
+TinyLlama/TinyLlama-1.1B-Chat-v1.0
+PY007/TinyLlama-1.1B-Chat-v0.3
+saiteja-coder/TinyLlama-1.1B-SFT-DPO
+
+# --- H2O.ai & Danube Series ---
+h2oai/h2o-danube3-4b-chat
+h2oai/h2o-danube2-1.8b-chat
+
+# --- AllenAI OLMo Series ---
+allenai/OLMo-1B-0724-Instruct
+allenai/OLMo-1B-Instruct
+
+# --- Arcee & Merge Communities ---
+arcee-ai/Llama-3.1-SuperNova-Lite
+rombodawg/Llama-3.2-3B-Instruct-Coder
+MaziyarPanahi/Llama-3.2-3B-Instruct-v1.1
+chujiezheng/Llama-3.2-3B-Instruct-Thinking
+
+# --- Additional Light Instruct & Chat Models ---
+RocketKnight1/Qwen2.5-0.5B-Instruct-Anemone
+internlm/internlm2-chat-1_8b
+utter-project/EuroLLM-1.7B-Instruct
+StateSpaces/mamba-2.8b-slimpj
+BlinkDL/rwkv-4-pile-1b6
+VILA-Lab/VILA1.5-3B                   # Multimodal/Language capable
+deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B
+princeton-nlp/Sheared-LLaMA-1.3B
+Deci/DeciLM-1b
+Defog/sqlcoder-7b-2                   # Borderline on T4, swapped for:
+NumbersStation/nsql-llama-2-7B        # Note: If 7B fails, use below alternative
+defog/sqlcoder-tiny-7b                # Optimized SQL tiny variant

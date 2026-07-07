@@ -31,7 +31,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 from model_runner import ModelRunner
 from evals import EVAL_REGISTRY
 from scoring import SCORER_REGISTRY
-from result_paths import result_path
+from result_paths import result_path, is_valid_result
 
 
 def run(model_id: str, eval_names: list[str], n: int, scorer_name: str, out_dir: str, force: bool = False):
@@ -41,8 +41,15 @@ def run(model_id: str, eval_names: list[str], n: int, scorer_name: str, out_dir:
     pending = []
     for eval_name in eval_names:
         existing = result_path(model_id, eval_name, scorer_name, out_dir)
-        if os.path.exists(existing) and not force:
+        if force:
+            pending.append(eval_name)
+        elif is_valid_result(existing):
             print(f"[run_eval] {model_id} / {eval_name} / {scorer_name} already tested -- skipping ({existing})")
+        elif os.path.exists(existing):
+            # File is there but corrupt/incomplete (partial write, broken upload).
+            # Re-run it from scratch rather than trusting a half-finished result.
+            print(f"[run_eval] {model_id} / {eval_name} / {scorer_name} has an incomplete/corrupt result -- re-running ({existing})")
+            pending.append(eval_name)
         else:
             pending.append(eval_name)
 
