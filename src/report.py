@@ -15,8 +15,13 @@ RESULTS_DIR = os.path.join(os.path.dirname(__file__), "..", "results")
 
 
 def load_all_runs():
+    # Match only "<model>__<eval>__<scorer>.json" files that run_eval.py produces.
+    # A plain "*.json" glob would also match this script's own output
+    # (leaderboard.json), which has a different shape and no "model_id" key --
+    # that self-contamination is what causes a KeyError on the second run.
+    pattern = os.path.join(RESULTS_DIR, "*__*__*.json")
     runs = []
-    for path in sorted(glob.glob(os.path.join(RESULTS_DIR, "*.json"))):
+    for path in sorted(glob.glob(pattern)):
         with open(path) as f:
             runs.append(json.load(f))
     return runs
