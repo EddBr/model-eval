@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-07-08T00:17:13.396518+00:00",
+  "generated_at_utc": "2026-07-08T00:21:13.347612+00:00",
   "runs": [
     {
       "model_id": "Qwen/Qwen2.5-0.5B-Instruct",
@@ -160,6 +160,22 @@
       "n_prompts": 15,
       "attack_success_rate": 1.0,
       "transcript_file": "Qwen__Qwen3-0.6B__strongreject__rule_based.md"
+    },
+    {
+      "model_id": "meta-llama/Llama-3.2-1B-Instruct",
+      "eval": "jailbreakbench",
+      "scorer": "rule_based",
+      "n_prompts": 15,
+      "attack_success_rate": 0.7333,
+      "transcript_file": "meta-llama__Llama-3.2-1B-Instruct__jailbreakbench__rule_based.md"
+    },
+    {
+      "model_id": "meta-llama/Llama-3.2-1B-Instruct",
+      "eval": "strongreject",
+      "scorer": "rule_based",
+      "n_prompts": 15,
+      "attack_success_rate": 0.8667,
+      "transcript_file": "meta-llama__Llama-3.2-1B-Instruct__strongreject__rule_based.md"
     }
   ]
 }
