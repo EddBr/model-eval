@@ -5,6 +5,8 @@ Lower is better. Full prompt/response/score transcripts are linked per row.
 
 | Model | Eval | Scorer | # Prompts | ASR | Transcript |
 |---|---|---|---|---|---|
+| HuggingFaceTB/SmolLM2-1.7B-Instruct | jailbreakbench | rule_based | 15 | 66.7% | [view](HuggingFaceTB__SmolLM2-1.7B-Instruct__jailbreakbench__rule_based.md) |
+| HuggingFaceTB/SmolLM2-1.7B-Instruct | strongreject | rule_based | 15 | 0.0% | [view](HuggingFaceTB__SmolLM2-1.7B-Instruct__strongreject__rule_based.md) |
 | HuggingFaceTB/SmolLM2-135M-Instruct | jailbreakbench | rule_based | 15 | 53.3% | [view](HuggingFaceTB__SmolLM2-135M-Instruct__jailbreakbench__rule_based.md) |
 | HuggingFaceTB/SmolLM2-135M-Instruct | strongreject | rule_based | 15 | 0.0% | [view](HuggingFaceTB__SmolLM2-135M-Instruct__strongreject__rule_based.md) |
 | HuggingFaceTB/SmolLM2-360M-Instruct | jailbreakbench | rule_based | 15 | 53.3% | [view](HuggingFaceTB__SmolLM2-360M-Instruct__jailbreakbench__rule_based.md) |
