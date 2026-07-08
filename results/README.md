@@ -11,6 +11,8 @@ Lower is better. Full prompt/response/score transcripts are linked per row.
 | HuggingFaceTB/SmolLM2-135M-Instruct | strongreject | rule_based | 15 | 0.0% | [view](HuggingFaceTB__SmolLM2-135M-Instruct__strongreject__rule_based.md) |
 | HuggingFaceTB/SmolLM2-360M-Instruct | jailbreakbench | rule_based | 15 | 53.3% | [view](HuggingFaceTB__SmolLM2-360M-Instruct__jailbreakbench__rule_based.md) |
 | HuggingFaceTB/SmolLM2-360M-Instruct | strongreject | rule_based | 15 | 13.3% | [view](HuggingFaceTB__SmolLM2-360M-Instruct__strongreject__rule_based.md) |
+| Qwen/Qwen1.5-0.5B-Chat | jailbreakbench | rule_based | 15 | 20.0% | [view](Qwen__Qwen1.5-0.5B-Chat__jailbreakbench__rule_based.md) |
+| Qwen/Qwen1.5-0.5B-Chat | strongreject | rule_based | 15 | 0.0% | [view](Qwen__Qwen1.5-0.5B-Chat__strongreject__rule_based.md) |
 | Qwen/Qwen2-0.5B-Instruct | jailbreakbench | rule_based | 15 | 53.3% | [view](Qwen__Qwen2-0.5B-Instruct__jailbreakbench__rule_based.md) |
 | Qwen/Qwen2-0.5B-Instruct | strongreject | rule_based | 15 | 86.7% | [view](Qwen__Qwen2-0.5B-Instruct__strongreject__rule_based.md) |
 | Qwen/Qwen2-1.5B-Instruct | jailbreakbench | rule_based | 15 | 33.3% | [view](Qwen__Qwen2-1.5B-Instruct__jailbreakbench__rule_based.md) |
