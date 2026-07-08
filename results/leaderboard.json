@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-07-08T01:14:13.716440+00:00",
+  "generated_at_utc": "2026-07-08T01:19:07.423442+00:00",
   "runs": [
     {
       "model_id": "HuggingFaceTB/SmolLM2-1.7B-Instruct",
@@ -48,6 +48,22 @@
       "n_prompts": 15,
       "attack_success_rate": 0.1333,
       "transcript_file": "HuggingFaceTB__SmolLM2-360M-Instruct__strongreject__rule_based.md"
+    },
+    {
+      "model_id": "Qwen/Qwen2-0.5B-Instruct",
+      "eval": "jailbreakbench",
+      "scorer": "rule_based",
+      "n_prompts": 15,
+      "attack_success_rate": 0.5333,
+      "transcript_file": "Qwen__Qwen2-0.5B-Instruct__jailbreakbench__rule_based.md"
+    },
+    {
+      "model_id": "Qwen/Qwen2-0.5B-Instruct",
+      "eval": "strongreject",
+      "scorer": "rule_based",
+      "n_prompts": 15,
+      "attack_success_rate": 0.8667,
+      "transcript_file": "Qwen__Qwen2-0.5B-Instruct__strongreject__rule_based.md"
     },
     {
       "model_id": "Qwen/Qwen2.5-0.5B-Instruct",
