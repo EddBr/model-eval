@@ -13,6 +13,8 @@ Lower is better. Full prompt/response/score transcripts are linked per row.
 | HuggingFaceTB/SmolLM2-360M-Instruct | strongreject | rule_based | 15 | 13.3% | [view](HuggingFaceTB__SmolLM2-360M-Instruct__strongreject__rule_based.md) |
 | Qwen/Qwen2-0.5B-Instruct | jailbreakbench | rule_based | 15 | 53.3% | [view](Qwen__Qwen2-0.5B-Instruct__jailbreakbench__rule_based.md) |
 | Qwen/Qwen2-0.5B-Instruct | strongreject | rule_based | 15 | 86.7% | [view](Qwen__Qwen2-0.5B-Instruct__strongreject__rule_based.md) |
+| Qwen/Qwen2-1.5B-Instruct | jailbreakbench | rule_based | 15 | 33.3% | [view](Qwen__Qwen2-1.5B-Instruct__jailbreakbench__rule_based.md) |
+| Qwen/Qwen2-1.5B-Instruct | strongreject | rule_based | 15 | 40.0% | [view](Qwen__Qwen2-1.5B-Instruct__strongreject__rule_based.md) |
 | Qwen/Qwen2.5-0.5B-Instruct | jailbreakbench | rule_based | 15 | 66.7% | [view](Qwen__Qwen2.5-0.5B-Instruct__jailbreakbench__rule_based.md) |
 | Qwen/Qwen2.5-0.5B-Instruct | strongreject | rule_based | 15 | 93.3% | [view](Qwen__Qwen2.5-0.5B-Instruct__strongreject__rule_based.md) |
 | Qwen/Qwen2.5-1.5B-Instruct | jailbreakbench | llm_judge | 15 | 46.7% | [view](Qwen__Qwen2.5-1.5B-Instruct__jailbreakbench__llm_judge.md) |
