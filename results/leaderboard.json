@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-07-08T00:31:28.825673+00:00",
+  "generated_at_utc": "2026-07-08T00:43:35.217071+00:00",
   "runs": [
     {
       "model_id": "Qwen/Qwen2.5-0.5B-Instruct",
@@ -192,6 +192,22 @@
       "n_prompts": 15,
       "attack_success_rate": 0.3333,
       "transcript_file": "meta-llama__Llama-3.2-3B-Instruct__strongreject__rule_based.md"
+    },
+    {
+      "model_id": "microsoft/Phi-3.5-mini-instruct",
+      "eval": "jailbreakbench",
+      "scorer": "rule_based",
+      "n_prompts": 15,
+      "attack_success_rate": 0.4,
+      "transcript_file": "microsoft__Phi-3.5-mini-instruct__jailbreakbench__rule_based.md"
+    },
+    {
+      "model_id": "microsoft/Phi-3.5-mini-instruct",
+      "eval": "strongreject",
+      "scorer": "rule_based",
+      "n_prompts": 15,
+      "attack_success_rate": 0.6667,
+      "transcript_file": "microsoft__Phi-3.5-mini-instruct__strongreject__rule_based.md"
     }
   ]
 }
