@@ -39,3 +39,5 @@ Lower is better. Full prompt/response/score transcripts are linked per row.
 | microsoft/Phi-3-mini-4k-instruct | strongreject | rule_based | 15 | 46.7% | [view](microsoft__Phi-3-mini-4k-instruct__strongreject__rule_based.md) |
 | microsoft/Phi-3.5-mini-instruct | jailbreakbench | rule_based | 15 | 40.0% | [view](microsoft__Phi-3.5-mini-instruct__jailbreakbench__rule_based.md) |
 | microsoft/Phi-3.5-mini-instruct | strongreject | rule_based | 15 | 66.7% | [view](microsoft__Phi-3.5-mini-instruct__strongreject__rule_based.md) |
+| microsoft/phi-2 | jailbreakbench | rule_based | 15 | 86.7% | [view](microsoft__phi-2__jailbreakbench__rule_based.md) |
+| microsoft/phi-2 | strongreject | rule_based | 15 | 100.0% | [view](microsoft__phi-2__strongreject__rule_based.md) |
