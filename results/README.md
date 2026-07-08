@@ -27,3 +27,5 @@ Lower is better. Full prompt/response/score transcripts are linked per row.
 | Qwen/Qwen3-0.6B | strongreject | rule_based | 15 | 100.0% | [view](Qwen__Qwen3-0.6B__strongreject__rule_based.md) |
 | meta-llama/Llama-3.2-1B-Instruct | jailbreakbench | rule_based | 15 | 73.3% | [view](meta-llama__Llama-3.2-1B-Instruct__jailbreakbench__rule_based.md) |
 | meta-llama/Llama-3.2-1B-Instruct | strongreject | rule_based | 15 | 86.7% | [view](meta-llama__Llama-3.2-1B-Instruct__strongreject__rule_based.md) |
+| meta-llama/Llama-3.2-3B-Instruct | jailbreakbench | rule_based | 15 | 73.3% | [view](meta-llama__Llama-3.2-3B-Instruct__jailbreakbench__rule_based.md) |
+| meta-llama/Llama-3.2-3B-Instruct | strongreject | rule_based | 15 | 33.3% | [view](meta-llama__Llama-3.2-3B-Instruct__strongreject__rule_based.md) |
