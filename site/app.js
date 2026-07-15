@@ -249,7 +249,12 @@ async function load() {
   document.getElementById("search").addEventListener("input", applySortAndFilter);
 
   try {
-    const res = await fetch(LEADERBOARD_URL, { cache: "no-store" });
+    // The leaderboard changes independently of the static site deployment.
+    // Add a per-load query string so an intermediary cache cannot keep serving
+    // an older (possibly malformed) version of the JSON after it is replaced.
+    const url = new URL(LEADERBOARD_URL);
+    url.searchParams.set("cache_bust", Date.now().toString());
+    const res = await fetch(url, { cache: "no-store" });
     if (!res.ok) throw new Error(`fetch failed: ${res.status}`);
     const data = await res.json();
     const runs = data.runs || [];
