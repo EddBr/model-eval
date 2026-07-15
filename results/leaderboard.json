@@ -1,9 +1,5 @@
 {
-<<<<<<< HEAD
   "generated_at_utc": "2026-07-15T09:42:36.786244+00:00",
-=======
-  "generated_at_utc": "2026-07-08T01:33:09.630591+00:00",
->>>>>>> 09dd68056950f677302b2d1ca921c4b1a44d8c00
   "runs": [
     {
       "model_id": "HuggingFaceTB/SmolLM2-1.7B-Instruct",
