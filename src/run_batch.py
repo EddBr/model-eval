@@ -41,11 +41,12 @@ def read_model_list(path: str) -> list[str]:
     return models
 
 
-def already_done(model_id: str, eval_names: list[str], scorer: str) -> bool:
+def already_done(model_id: str, eval_names: list[str], scorer: str,
+                 judge_provider: str, judge_model: str) -> bool:
     # Require a *valid, complete* result for every requested eval -- a missing
     # OR corrupt/incomplete file means this model still has work to do, so it
     # gets re-run (run_eval.py itself only redoes the eval(s) actually missing).
-    return all(is_valid_result(result_path(model_id, e, scorer, RESULTS_DIR)) for e in eval_names)
+    return all(is_valid_result(result_path(model_id, e, scorer, RESULTS_DIR, judge_provider, judge_model)) for e in eval_names)
 
 
 def log_failure(model_id: str, error: str):
@@ -79,13 +80,14 @@ def git_commit_and_push(model_id: str, git_author_name: str, git_author_email: s
 
 
 def run(models: list[str], eval_names: list[str], n: int, scorer: str,
+        judge_provider: str, judge_model: str,
         push: bool, git_author_name: str, git_author_email: str, auth_header: str,
         dry_run: bool, force: bool = False):
     print(f"[run_batch] {len(models)} model(s) queued")
     for i, model_id in enumerate(models, 1):
         print(f"\n=== [{i}/{len(models)}] {model_id} ===")
 
-        if not force and already_done(model_id, eval_names, scorer):
+        if not force and already_done(model_id, eval_names, scorer, judge_provider, judge_model):
             print(f"[run_batch] already have all results for {model_id} -- skipping")
             continue
 
@@ -99,6 +101,8 @@ def run(models: list[str], eval_names: list[str], n: int, scorer: str,
             "--eval", ",".join(eval_names),
             "--n", str(n),
             "--scorer", scorer,
+            "--judge-provider", judge_provider,
+            "--judge-model", judge_model,
         ]
         if force:
             cmd.append("--force")
@@ -124,6 +128,8 @@ if __name__ == "__main__":
     p.add_argument("--eval", default="jailbreakbench,strongreject")
     p.add_argument("--n", type=int, default=15)
     p.add_argument("--scorer", default="rule_based")
+    p.add_argument("--judge-provider", default="anthropic", choices=("anthropic", "openai"))
+    p.add_argument("--judge-model", default="claude-sonnet-4-6")
     p.add_argument("--push", action="store_true", help="commit+push results after each model")
     p.add_argument("--dry-run", action="store_true", help="print what would run without running it")
     p.add_argument("--force", action="store_true", help="re-run models even if results already exist")
@@ -141,6 +147,8 @@ if __name__ == "__main__":
         eval_names=eval_list,
         n=args.n,
         scorer=args.scorer,
+        judge_provider=args.judge_provider,
+        judge_model=args.judge_model,
         push=args.push,
         git_author_name=os.environ.get("GIT_AUTHOR_NAME", ""),
         git_author_email=os.environ.get("GIT_AUTHOR_EMAIL", ""),

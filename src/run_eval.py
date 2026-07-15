@@ -22,6 +22,7 @@ file is skipped rather than re-run -- re-testing an already-tested model
 just burns GPU time for an identical result. Pass --force to override.
 """
 import argparse
+from functools import partial
 import json
 import os
 import sys
@@ -31,16 +32,19 @@ sys.path.insert(0, os.path.dirname(__file__))
 from model_runner import ModelRunner
 from evals import EVAL_REGISTRY
 from scoring import SCORER_REGISTRY
+from scoring.llm_judge import DEFAULT_MODEL, DEFAULT_PROVIDER
 from result_paths import result_path, is_valid_result
 
 
-def run(model_id: str, eval_names: list[str], n: int, scorer_name: str, out_dir: str, force: bool = False):
+def run(model_id: str, eval_names: list[str], n: int, scorer_name: str, out_dir: str,
+        judge_provider: str = DEFAULT_PROVIDER, judge_model: str = DEFAULT_MODEL,
+        force: bool = False):
     # Figure out up front which evals actually need running, so we can skip
     # loading the model entirely if there's nothing left to do -- that's
     # where the real compute cost is, not the dataset loading or scoring.
     pending = []
     for eval_name in eval_names:
-        existing = result_path(model_id, eval_name, scorer_name, out_dir)
+        existing = result_path(model_id, eval_name, scorer_name, out_dir, judge_provider, judge_model)
         if force:
             pending.append(eval_name)
         elif is_valid_result(existing):
@@ -58,6 +62,8 @@ def run(model_id: str, eval_names: list[str], n: int, scorer_name: str, out_dir:
         return
 
     scorer = SCORER_REGISTRY[scorer_name]
+    if scorer_name == "llm_judge":
+        scorer = partial(scorer, provider=judge_provider, model=judge_model)
     runner = ModelRunner(model_id)
 
     for eval_name in pending:
@@ -87,13 +93,15 @@ def run(model_id: str, eval_names: list[str], n: int, scorer_name: str, out_dir:
 
         asr = sum(r["attack_success"] for r in records) / len(records) if records else 0.0
 
-        out_path = result_path(model_id, eval_name, scorer_name, out_dir)
+        out_path = result_path(model_id, eval_name, scorer_name, out_dir, judge_provider, judge_model)
         os.makedirs(out_dir, exist_ok=True)
         with open(out_path, "w") as f:
             json.dump({
                 "model_id": model_id,
                 "eval": eval_name,
                 "scorer": scorer_name,
+                **({"judge_provider": judge_provider, "judge_model": judge_model}
+                   if scorer_name == "llm_judge" else {}),
                 "n_prompts": len(records),
                 "attack_success_rate": round(asr, 4),
                 "records": records,
@@ -107,6 +115,10 @@ if __name__ == "__main__":
     p.add_argument("--eval", default="all", help="jailbreakbench | harmbench | strongreject | all")
     p.add_argument("--n", type=int, default=10, help="prompts per eval (0 = all)")
     p.add_argument("--scorer", default="rule_based", choices=list(SCORER_REGISTRY.keys()))
+    p.add_argument("--judge-provider", default=DEFAULT_PROVIDER, choices=("anthropic", "openai"),
+                   help="LLM-judge API provider (only used with --scorer llm_judge)")
+    p.add_argument("--judge-model", default=DEFAULT_MODEL,
+                   help="LLM-judge model ID (only used with --scorer llm_judge)")
     p.add_argument("--out", default="results")
     p.add_argument("--force", action="store_true", help="re-run even if results already exist for this model/eval/scorer")
     args = p.parse_args()
@@ -119,4 +131,5 @@ if __name__ == "__main__":
         if unknown:
             raise SystemExit(f"Unknown eval name(s): {unknown}. Choices: {list(EVAL_REGISTRY.keys())} or 'all'")
 
-    run(args.model, eval_names, args.n, args.scorer, args.out, force=args.force)
+    run(args.model, eval_names, args.n, args.scorer, args.out,
+        judge_provider=args.judge_provider, judge_model=args.judge_model, force=args.force)

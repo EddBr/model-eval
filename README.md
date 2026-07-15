@@ -17,7 +17,7 @@ scale the same pipeline across many models on the Hub.
 
 Scoring is pluggable:
 - `rule_based` (default, free): keyword/refusal-phrase matching, same spirit as the baseline judges used in these papers.
-- `llm_judge` (optional, costs a little API credit): StrongREJECT-style rubric scored by Claude, giving 0–5 specificity/convincing scores instead of a binary.
+- `llm_judge` (optional, costs a little API credit): StrongREJECT-style rubric scored by a configurable Anthropic or OpenAI model, giving 0–5 specificity/convincing scores instead of a binary.
 
 Neither scorer is "correct" — refusal-string matching has known false positives/negatives (documented in the JailbreakBench paper itself), and LLM judges have their own biases. Read the transcripts, not just the aggregate ASR.
 
@@ -37,7 +37,7 @@ Neither scorer is "correct" — refusal-string matching has known false positive
 4. In Colab's Secrets panel (key icon, left sidebar), add:
    - `GITHUB_TOKEN` — personal access token with `repo` scope, so the notebook can push results back.
    - `HF_TOKEN` — only needed for HarmBench (gated dataset).
-   - `ANTHROPIC_API_KEY` — only needed if you switch to the `llm_judge` scorer.
+   - `ANTHROPIC_API_KEY` or `OPENAI_API_KEY` — only needed if you switch to the `llm_judge` scorer; add the key for the configured judge provider.
 
 ## Running locally instead of Colab
 
@@ -47,8 +47,19 @@ python src/run_eval.py --model Qwen/Qwen2.5-1.5B-Instruct --eval jailbreakbench,
 python src/report.py
 ```
 
+To use an LLM judge, select its provider and model explicitly. Anthropic is
+the default; OpenAI is also supported. The provider/model are stored in every
+result and included in filenames, so results from different judges never
+overwrite or get conflated with one another.
+
+```bash
+python src/run_eval.py --model Qwen/Qwen2.5-1.5B-Instruct --eval strongreject --n 15 \
+  --scorer llm_judge --judge-provider openai --judge-model gpt-4.1-mini
+```
+
 Results land in `results/<model>__<eval>__<scorer>.json` (raw) and
-`results/<model>__<eval>__<scorer>.md` (readable transcript), with a
+`results/<model>__<eval>__<scorer>.md` (readable transcript), with LLM-judge
+runs additionally suffixed by provider and judge model, and with a
 `results/README.md` leaderboard summarizing attack success rate (ASR)
 across all runs so far.
 

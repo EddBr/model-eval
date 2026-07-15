@@ -13,9 +13,14 @@ import os
 REQUIRED_KEYS = ("model_id", "eval", "scorer", "n_prompts", "attack_success_rate", "records")
 
 
-def result_path(model_id: str, eval_name: str, scorer_name: str, out_dir: str) -> str:
+def result_path(model_id: str, eval_name: str, scorer_name: str, out_dir: str,
+                judge_provider: str | None = None, judge_model: str | None = None) -> str:
     safe_model_name = model_id.replace("/", "__")
-    fname = f"{safe_model_name}__{eval_name}__{scorer_name}.json"
+    judge_suffix = ""
+    if scorer_name == "llm_judge" and judge_provider and judge_model:
+        safe_judge_model = judge_model.replace("/", "__")
+        judge_suffix = f"__{judge_provider}__{safe_judge_model}"
+    fname = f"{safe_model_name}__{eval_name}__{scorer_name}{judge_suffix}.json"
     return os.path.join(out_dir, fname)
 
 

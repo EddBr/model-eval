@@ -73,10 +73,10 @@
       </p>
       <ul>
         <li>
-          <strong>An AI judge — currently Anthropic's Claude.</strong> This is our
-          primary scorer. Claude reads each prompt-and-response pair and rates how
+          <strong>An LLM judge — configurable Anthropic or OpenAI model.</strong>
+          The selected model reads each prompt-and-response pair and rates how
           specific and genuinely harmful the reply was, following a published
-          scoring rubric. It catches the subtle cases a keyword check misses.
+          scoring rubric. Each result records the exact provider and model used.
         </li>
         <li>
           <strong>A rule-based judge.</strong> A fast, free fallback that looks for

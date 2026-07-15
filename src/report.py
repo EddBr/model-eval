@@ -9,6 +9,7 @@ Run this after run_eval.py, before committing to GitHub.
 import glob
 import json
 import os
+import re
 import sys
 from datetime import datetime, timezone
 
@@ -16,6 +17,33 @@ sys.path.insert(0, os.path.dirname(__file__))
 from result_paths import is_valid_result
 
 RESULTS_DIR = os.path.join(os.path.dirname(__file__), "..", "results")
+
+
+def _fenced_text(value: str) -> str:
+    """Render arbitrary model text literally without Markdown reformatting it."""
+    value = str(value)
+    longest_tick_run = max((len(match.group()) for match in re.finditer(r"`+", value)), default=0)
+    fence = "`" * max(3, longest_tick_run + 1)
+    return f"{fence}text\n{value}\n{fence}\n"
+
+
+def judge_info(run):
+    """Return recorded judge provenance, including legacy Claude run files."""
+    provider = run.get("judge_provider")
+    model = run.get("judge_model")
+    if provider and model:
+        return provider, model
+
+    # Before judge provenance was a top-level field, the scorer name in each
+    # record was ``llm_judge_<model>``. Preserve that useful information in
+    # regenerated leaderboards instead of displaying a vague generic label.
+    records = run.get("records", [])
+    if run.get("scorer") == "llm_judge" and records:
+        legacy_scorer = records[0].get("scorer", "")
+        prefix = "llm_judge_"
+        if legacy_scorer.startswith(prefix):
+            return "anthropic", legacy_scorer[len(prefix):]
+    return None, None
 
 
 def load_all_runs():
@@ -54,7 +82,7 @@ def write_leaderboard(runs):
     ]
     for run in runs:
         safe_model = run["model_id"].replace("/", "__")
-        transcript_fname = f"{safe_model}__{run['eval']}__{run['scorer']}.md"
+        transcript_fname = transcript_filename(run)
         lines.append(
             f"| {run['model_id']} | {run['eval']} | {run['scorer']} | "
             f"{run['n_prompts']} | {run['attack_success_rate']:.1%} | "
@@ -64,20 +92,32 @@ def write_leaderboard(runs):
         f.write("\n".join(lines) + "\n")
 
 
-def write_transcript(run):
+def transcript_filename(run):
     safe_model = run["model_id"].replace("/", "__")
-    fname = f"{safe_model}__{run['eval']}__{run['scorer']}.md"
+    judge_suffix = ""
+    # Legacy files predate top-level judge provenance and already have public
+    # transcript URLs without this suffix. Only new-format runs get it.
+    if run["scorer"] == "llm_judge" and run.get("judge_provider") and run.get("judge_model"):
+        judge_suffix = f"__{run['judge_provider']}__{run['judge_model'].replace('/', '__')}"
+    return f"{safe_model}__{run['eval']}__{run['scorer']}{judge_suffix}.md"
+
+
+def write_transcript(run):
+    fname = transcript_filename(run)
+    judge_provider, judge_model = judge_info(run)
+    judge_description = f"Judge: **{judge_provider} / {judge_model}**.\n" if judge_model else ""
     lines = [
         f"# {run['model_id']} — {run['eval']} ({run['scorer']})\n",
         f"ASR: **{run['attack_success_rate']:.1%}** across {run['n_prompts']} prompts.\n",
+        judge_description,
         "---\n",
     ]
     for r in run["records"]:
         flag = "🔴 SUCCESS (complied)" if r["attack_success"] else "🟢 refused"
         lines.append(f"### {r['prompt_id']}  {flag}")
         lines.append(f"*category: {r['category']} | source: {r['source']}*\n")
-        lines.append(f"**Prompt:**\n> {r['prompt']}\n")
-        lines.append(f"**Response:**\n> {r['response']}\n")
+        lines.append(f"**Prompt:**\n{_fenced_text(r['prompt'])}")
+        lines.append(f"**Response:**\n{_fenced_text(r['response'])}")
         lines.append(f"**Score details:** `{json.dumps({k: v for k, v in r.items() if k not in ('prompt','response')})}`\n")
         lines.append("---\n")
     with open(os.path.join(RESULTS_DIR, fname), "w") as f:
@@ -90,14 +130,16 @@ def write_leaderboard_json(runs):
     rate limits even with many visitors."""
     entries = []
     for run in runs:
-        safe_model = run["model_id"].replace("/", "__")
+        judge_provider, judge_model = judge_info(run)
         entries.append({
             "model_id": run["model_id"],
             "eval": run["eval"],
             "scorer": run["scorer"],
             "n_prompts": run["n_prompts"],
             "attack_success_rate": run["attack_success_rate"],
-            "transcript_file": f"{safe_model}__{run['eval']}__{run['scorer']}.md",
+            "judge_provider": judge_provider,
+            "judge_model": judge_model,
+            "transcript_file": transcript_filename(run),
         })
     payload = {
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),

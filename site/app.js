@@ -110,7 +110,11 @@ function detailTable(model) {
   const rows = model.runs
     .map((r) => {
       const isJudge = r.scorer === "llm_judge";
-      const scorerLabel = isJudge ? "Claude (LLM judge)" : "rule-based";
+      const scorerLabel = isJudge
+        ? r.judge_model
+          ? `LLM judge: ${r.judge_model} (${r.judge_provider})`
+          : "LLM judge: model not recorded"
+        : "rule-based";
       const pct = Math.round(r.attack_success_rate * 100);
       const href = TRANSCRIPT_BASE + encodeURIComponent(r.transcript_file);
       return `
@@ -251,7 +255,7 @@ async function load() {
     const runs = data.runs || [];
 
     document.getElementById("last-updated").textContent = data.generated_at_utc
-      ? `updated ${new Date(data.generated_at_utc).toLocaleDateString()}`
+      ? `updated ${new Date(data.generated_at_utc).toLocaleDateString()} at ${new Date(data.generated_at_utc).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", timeZoneName: "short" })}`
       : "";
 
     if (runs.length === 0) {
